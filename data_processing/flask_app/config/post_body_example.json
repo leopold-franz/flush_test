@@ -3,7 +3,7 @@
   "userID": 3,
   "measurements": [
     {
-      "timestamp": "2020-01-13 22:00:00.234 CET",
+      "timestamp": "2020-01-13 22:00:00.234",
       "temperature": 25,
       "humidity": 20.64,
       "pressure": 0.42,
@@ -33,7 +33,7 @@
       ]
     },
     {
-      "timestamp": "2020-01-13 23:00:00.234 CET",
+      "timestamp": "2020-01-13 23:00:00.234",
       "temperature": 26,
       "humidity": 23.64,
       "pressure": 0.42,
