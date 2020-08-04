@@ -20,8 +20,8 @@ def main():
                                               port="8081",
                                               db_name="postgres",
                                               verbose=True)
-        test_populate(cursor)
-        run_app(cursor)
+        # test_populate(connection)
+        run_app(connection)
     except (Exception, connection_error()) as error:
         print("Error while connecting to PostgreSQL", error)
     finally:

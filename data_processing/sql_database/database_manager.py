@@ -2,6 +2,7 @@
 # 1. sudo apt-get install libpq-dev
 # 2. pip install psycopg2
 import psycopg2
+from psycopg2 import sql
 from datetime import datetime
 
 
@@ -61,14 +62,18 @@ def add_user(sql_cursor, first_name, last_name, dob):
         user_id: int Identification token of toilet
     """
 
-    sql_cmd = """
+    sql_cmd = sql.SQL("""
         INSERT INTO users (first_name, last_name, date_of_birth)
-        VALUES('{}', '{}', '{}')
+        VALUES({first_name}, {last_name}, {dob})
         RETURNING user_id;
-    """.format(first_name, last_name, str(dob))
+    """).format(first_name=sql.Literal(first_name),
+                last_name=sql.Literal(last_name),
+                dob=sql.Literal(str(dob)))
     sql_cursor.execute(sql_cmd)
     record = sql_cursor.fetchone()
-    print("Result:", record, "\n")
+    if not record:  # Check that a proper result value is given back
+        return False
+    # print("Result:", record, "\n")
     return record[0]
 
 
@@ -87,14 +92,19 @@ def add_toilet(sql_cursor, toilet_type, address, location, status):
         toilet_id: int Identification token of toilet
     """
 
-    sql_cmd = """
+    sql_cmd = sql.SQL("""
         INSERT INTO toilets (type, address, location, status)
-        VALUES('{}', '{}', '{}', '{}')
+        VALUES({ttype}, {addr}, {loc}, {status})
         RETURNING toilet_id;
-    """.format(toilet_type, address, location, status)
+    """).format(ttype=sql.Literal(toilet_type),
+                addr=sql.Literal(address),
+                loc=sql.Literal(location),
+                status=sql.Literal(status))
     sql_cursor.execute(sql_cmd)
     record = sql_cursor.fetchone()
-    print("Result:", record, "\n")
+    if not record:  # Check that a proper result value is given back
+        return False
+    # print("Result:", record, "\n")
     return record[0]
 
 
@@ -114,14 +124,20 @@ def add_event(sql_cursor, user_id, toilet_id, timestamp_start, timestamp_end, st
         event_id: int Identification token of generated event
     """
 
-    sql_cmd = """
+    sql_cmd = sql.SQL("""
         INSERT INTO events (user_id, toilet_id, timestamp_start, timestamp_end, status)
-        VALUES('{}', '{}', '{}', '{}', '{}')
+        VALUES({uid}, {tid}, {ts_start}, {ts_end}, {status})
         RETURNING event_id;
-    """.format(user_id, toilet_id, timestamp_start, timestamp_end, status)
+    """).format(uid=sql.Literal(user_id),
+                tid=sql.Literal(toilet_id),
+                ts_start=sql.Literal(timestamp_start),
+                ts_end=sql.Literal(timestamp_end),
+                status=sql.Literal(status))
     sql_cursor.execute(sql_cmd)
     record = sql_cursor.fetchone()
-    print("Result:", record, "\n")
+    if not record:  # Check that a proper result value is given back
+        return False
+    # print("Event Result:", record, "\n")
     return record[0]
 
 
@@ -153,34 +169,46 @@ def add_raw_measurement(sql_cursor, event_id, timestamp, temperature, humidity, 
     Returns:
         None
     """
-
-    sql_cmd = """
-        INSERT INTO raw_measurements (
-            event_id,
-            timestamp,
-            temperature,
-            humidity,
-            pressure,
-            weight_seat, weight_floor,
-            gas_co2, gas_ch4, gas_nox, gas_cox, gas_voc, gas_nh3,
-            tof_1, tof_2, tof_3, tof_4)
-        VALUES(
-            '{}',
-            '{}',
-            '{}',
-            '{}',
-            '{}',
-            '{}','{}',
-            '{}','{}','{}','{}','{}','{}',
-            '{}','{}','{}','{}');
-    """.format(event_id, timestamp, temperature, humidity, pressure, weight_seat, weight_floor, gas_co2, gas_ch4,
-               gas_nox, gas_cox, gas_voc, gas_nh3, tof_1, tof_2, tof_3, tof_4)
+    sql_cmd = sql.SQL("""
+            INSERT INTO raw_measurements (
+                event_id,
+                timestamp,
+                temperature,
+                humidity,
+                pressure,
+                weight_seat, weight_floor,
+                gas_co2, gas_ch4, gas_nox, gas_cox, gas_voc, gas_nh3,
+                tof_1, tof_2, tof_3, tof_4)
+            VALUES(
+                {event_id},
+                {timestamp},
+                {temperature},
+                {humidity},
+                {pressure},
+                {weight_seat}, {weight_floor},
+                {gas_co2}, {gas_ch4}, {gas_nox}, {gas_cox}, {gas_voc}, {gas_nh3},
+                {tof_1}, {tof_2}, {tof_3}, {tof_4});
+        """).format(event_id=sql.Literal(event_id),
+                    timestamp=sql.Literal(timestamp),
+                    temperature=sql.Literal(temperature),
+                    humidity=sql.Literal(humidity),
+                    pressure=sql.Literal(pressure),
+                    weight_seat=sql.Literal(weight_seat),
+                    weight_floor=sql.Literal(weight_floor),
+                    gas_co2=sql.Literal(gas_co2),
+                    gas_ch4=sql.Literal(gas_ch4),
+                    gas_nox=sql.Literal(gas_nox),
+                    gas_cox=sql.Literal(gas_cox),
+                    gas_voc=sql.Literal(gas_voc),
+                    gas_nh3=sql.Literal(gas_nh3),
+                    tof_1=sql.Literal(tof_1),
+                    tof_2=sql.Literal(tof_2),
+                    tof_3=sql.Literal(tof_3),
+                    tof_4=sql.Literal(tof_4))
     sql_cursor.execute(sql_cmd)
-    # record = sql_cursor.fetchone()
-    # print("Result:", record, "\n")
 
 
-def get_table(sql_cursor, table, columns=[]):
+def get_table(sql_cursor, table, columns=None):
     """
     Retrieves column data from table using sql connection cursor
     Args:
@@ -191,16 +219,19 @@ def get_table(sql_cursor, table, columns=[]):
     Returns:
         result Data from sql query
     """
-    if len(columns) == 0:
-        colum_string = '*'
+    if columns is None:
+        column_string = '*'
     else:
-        colum_string = ','.join(columns)
+        column_string = ','.join(columns)
 
-    sql_cmd = """
-            SELECT {} FROM {}
-        """.format(colum_string, table)
+    sql_cmd = sql.SQL("""
+            SELECT * FROM {table}
+        """).format(  # colum_string=sql.Identifier(column_string),
+                    table=sql.Identifier(table))
     sql_cursor.execute(sql_cmd)
     record = sql_cursor.fetchall()
+    if not record:  # Check that a proper result value is given back
+        return False
     return record
 
 

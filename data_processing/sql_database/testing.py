@@ -5,35 +5,44 @@ from data_processing.sql_database.database_manager import *
 from datetime import datetime
 
 
-def select_all_from_raw_measurements(sql_cursor):
+def select_all_from_raw_measurements(sql_connection):
     """
     Test to check if database data retrieval works
     Args:
-        sql_cursor: sql connection cursor from psycopg2
+        sql_connection: sql connection from psycopg2
 
     Returns:
         result Result from database query
     """
-    return get_table(sql_cursor, 'raw_measurements')
+    with sql_connection.cursor() as sql_cursor:
+        return get_table(sql_cursor, 'raw_measurements')
 
 
-def test_populate(sql_cursor):
+def test_populate(sql_connection):
     """
     Function to test population of database with dummy data
     Args:
-        sql_cursor: sql connection cursor from psycopg2
+        sql_connection: sql connection from psycopg2
 
     Returns:
         None
     """
-    user_id = add_user(sql_cursor, 'leopold', 'franz', '1997-01-13')
+    with sql_connection.cursor() as sql_cursor:
+        user_id = add_user(sql_cursor, 'leopold', 'franz', '1997-01-13')
 
-    toilet_id = add_toilet(sql_cursor, 'flush-02', 'Schmelzbergstrasse 26, 8006 Zurich, Schweiz', 'first floor', 'active')
+        toilet_id = add_toilet(sql_cursor,
+                               'flush-02',
+                               'Schmelzbergstrasse 26, 8006 Zurich, Schweiz',
+                               'first floor',
+                               'active')
 
-    event_id = add_event(sql_cursor, user_id, toilet_id, str(datetime.now()), str(datetime.now()), 'done')
-    print(event_id)
+        event_id = add_event(sql_cursor, user_id, toilet_id, str(datetime.now()), str(datetime.now()), 'done')
+        print(event_id)
 
-    add_raw_measurement(sql_cursor, event_id, str(datetime.now()), 37.5, 40, 1, 60, 20, 8, 8, 8, 8, 8, 8, 2, 2, 2, 2)
+        add_raw_measurement(sql_cursor, event_id, str(datetime.now()),
+                            37.5, 40, 1, 60, 20, 8, 8, 8, 8, 8, 8, 2, 2, 2, 2)
+
+    sql_connection.commit()
 
 
 def main():
@@ -46,7 +55,7 @@ def main():
                                               port="5432",
                                               db_name="smarttoilet",
                                               verbose=True)
-        test_populate(cursor)
+        test_populate(connection)
     except (Exception, connection_error()) as error:
         print("Error while connecting to PostgreSQL", error)
     finally:
