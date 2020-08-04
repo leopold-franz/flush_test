@@ -1,0 +1,66 @@
+{
+  "toiletID": 3,
+  "userID": 3,
+  "measurements": [
+    {
+      "timestamp": "2020-01-13 22:00:00.234 CET",
+      "temperature": 25,
+      "humidity": 20.64,
+      "pressure": 0.42,
+      "weight": [
+        {
+          "seat": 0.42,
+          "floor": 0.42
+        }
+      ],
+      "gas": [
+        {
+          "CO2": 0.42,
+          "CH4": 0.42,
+          "NOX": 0.42,
+          "COX": 0.42,
+          "VOC": 0.42,
+          "NH3": 0.42
+        }
+      ],
+      "TOF": [
+        {
+          "Sensor1": 0.42,
+          "Sensor2": 0.42,
+          "Sensor3": 0.42,
+          "Sensor4": 0.42
+        }
+      ]
+    },
+    {
+      "timestamp": "2020-01-13 23:00:00.234 CET",
+      "temperature": 26,
+      "humidity": 23.64,
+      "pressure": 0.42,
+      "weight": [
+        {
+          "seat": 0.42,
+          "floor": 0.42
+        }
+      ],
+      "gas": [
+        {
+          "CO2": 0.42,
+          "CH4": 0.42,
+          "NOX": 0.42,
+          "COX": 0.42,
+          "VOC": 0.42,
+          "NH3": 0.42
+        }
+      ],
+      "TOF": [
+        {
+          "Sensor1": 0.42,
+          "Sensor2": 0.42,
+          "Sensor3": 0.42,
+          "Sensor4": 0.42
+        }
+      ]
+    }
+  ]
+}

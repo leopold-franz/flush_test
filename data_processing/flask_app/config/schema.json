@@ -1,0 +1,132 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "toiletID": {
+      "type": "integer"
+    },
+    "userID": {
+      "type": "integer"
+    },
+    "measurements": {
+      "type": "array",
+      "items": [
+        {
+          "type": "object",
+          "properties": {
+            "timestamp": {
+              "type": "string"
+            },
+            "temperature": {
+              "type": "number"
+            },
+            "humidity": {
+              "type": "number"
+            },
+            "pressure": {
+              "type": "number"
+            },
+            "weight": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "seat": {
+                      "type": "number"
+                    },
+                    "floor": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "seat",
+                    "floor"
+                  ]
+                }
+              ]
+            },
+            "gas": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "CO2": {
+                      "type": "number"
+                    },
+                    "CH4": {
+                      "type": "number"
+                    },
+                    "NOX": {
+                      "type": "number"
+                    },
+                    "COX": {
+                      "type": "number"
+                    },
+                    "VOC": {
+                      "type": "number"
+                    },
+                    "NH3": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "CO2",
+                    "CH4",
+                    "NOX",
+                    "COX",
+                    "VOC",
+                    "NH3"
+                  ]
+                }
+              ]
+            },
+            "TOF": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "Sensor1": {
+                      "type": "number"
+                    },
+                    "Sensor2": {
+                      "type": "number"
+                    },
+                    "Sensor3": {
+                      "type": "number"
+                    },
+                    "Sensor4": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "Sensor1",
+                    "Sensor2",
+                    "Sensor3",
+                    "Sensor4"
+                  ]
+                }
+              ]
+            }
+          },
+          "required": [
+            "timestamp",
+            "temperature",
+            "humidity",
+            "pressure",
+            "weight",
+            "gas",
+            "TOF"
+          ]
+        }
+      ]
+    }
+  },
+  "required": [
+    "toiletID",
+    "userID",
+    "measurements"
+  ]
+}
